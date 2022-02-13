@@ -1,12 +1,17 @@
+import logging
 import telebot
 from telebot import types
-from config import API
+import logging
+from config import *
+from flask import Flask, request
 import os
 import shutil
 from utils import stylize_image
 
-
+server = Flask(__name__)
 bot = telebot.TeleBot(token=API)
+logger = telebot.logger
+logger.setLevel(logging.DEBUG)
 
 def clear_folder(message: types.Message):
     """Clears username folder"""
@@ -117,5 +122,17 @@ Wait until you get the picture... (Usually it takes around 10-15 seconds)
             answer = bot.send_message(message.chat.id, """That's it! Wanna change something?""", reply_markup=finish)
 
 
-bot.infinity_polling()
+@server.route(f"/{API}", methods=["POST"])
+def redirect_message():
+    json_string = request.get_data().decode("utf-8")
+    update = types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return "!", 200
+
+if __name__ == "__main__":
+    bot.remove_webhook()
+    bot.set_webhook(url=APP_URL)
+    server.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
+    bot.infinity_polling()
 

@@ -1,4 +1,5 @@
-torch
-torchvision
-pyTelegramBotAPI
-pillow
+torch==1.10.2+cpu
+torchvision==0.11.3+cpu
+pyTelegramBotAPI==4.4.0
+pillow==9.0.1
+Flask==2.0.2
