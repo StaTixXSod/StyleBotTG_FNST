@@ -30,11 +30,8 @@ def resize(image, width=None, height=None):
         r = width / float(w)
         dim = (width, int(h * r))
 
-    # resize the image
-    # resized = cv2.resize(image, dim, interpolation=inter)
     width, height = dim
 
-    # return the resized image
     return width, height
 
 def load_image(filename, size=None, scale=None):
