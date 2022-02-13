@@ -25,6 +25,9 @@ def upload_image_on_server(message_info: types.Message):
     if message_info.photo:
         folder_name = message_info.from_user.first_name
 
+        if not os.path.exists(f"uploaded_images"):
+            os.mkdir(f"uploaded_images")
+
         if not os.path.exists(f"uploaded_images/{folder_name}"):
             os.mkdir(f"uploaded_images/{folder_name}")
 
