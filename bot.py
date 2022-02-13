@@ -135,5 +135,3 @@ if __name__ == "__main__":
     bot.set_webhook(url=APP_URL)
     server.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
 
-    bot.infinity_polling()
-
