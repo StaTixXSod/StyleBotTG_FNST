@@ -15,8 +15,8 @@ from vgg import Vgg16
 import glob
 
 
-def train(style_image, dataset="coco", batch_size=2, image_size=256,
-epochs=2, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=500):
+def train(style_image, dataset="coco", batch_size=2, image_size=128,
+epochs=1, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=500):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     np.random.seed(seed)
@@ -32,6 +32,13 @@ epochs=2, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=
     train_loader = DataLoader(train_dataset, batch_size=batch_size)
 
     transformer = TransformerNet().to(device)
+
+    genre = style_image.split("/")[-1].split(".")[0][:-1]
+    number = style_image.split("/")[-1].split(".")[0][-1]
+    model_path = f"models/{genre}/{style_name}{number}.model"
+
+    if os.path.exists(model_path):
+        transformer.load_state_dict(torch.load(model_path, map_location=device))
 
     optimizer = Adam(transformer.parameters(), lr)
     mse_loss = torch.nn.MSELoss()
@@ -105,4 +112,7 @@ epochs=2, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=
 style_list = glob.glob("styles/*/*.jpg")
 
 for style_path in style_list:
+    style_name = style_path.split("/")[-1].split(".")[0]
+    genre = style_path.split("/")[-2]
+    print(f"Now training {genre} -> {style_name}")
     train(style_path)
