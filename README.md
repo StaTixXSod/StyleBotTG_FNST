@@ -17,9 +17,7 @@ There is important thing to do, all pictures in repo sorted and named as "styles
 So if you have your style pictures, you can add a folder with new pictures and run training process.
 
 ## Available styles 
-- colormix 1, 2, 3
-- lights 1, 2, 3
-- psychodelic 3
+- psychodelic 1, 2, 3
 - all standart torch styles
 
 ## Advice
