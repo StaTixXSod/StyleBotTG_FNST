@@ -7,7 +7,6 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision import transforms
-import torch.onnx
 
 import utils
 from transformer_net import TransformerNet
@@ -109,10 +108,29 @@ epochs=1, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=
     print(f"\nDone, trained model {genre} saved at", save_model_path)
 
 
-style_list = glob.glob("styles/*/*.jpg")
+def train_all_styles(retrain=False):
+    """
+    Perform training for all styles in styles folder
+    Retrain: If True, model.state_dict will be loaded and retrained if the model already exists.
+    If False, style will be skipped.
+    """
+    style_list = glob.glob("styles/*/*")
 
-for style_path in style_list:
-    style_name = style_path.split("/")[-1].split(".")[0]
-    genre = style_path.split("/")[-2]
-    print(f"Now training {genre} -> {style_name}")
-    train(style_path)
+    for style_path in style_list:
+        style_name = style_path.split("/")[-1].split(".")[0]
+        genre = style_path.split("/")[-2]
+        model_path = f"models/{genre}/{style_name}.model"
+
+        if retrain and os.path.exists(model_path):
+            train(style_path)
+        
+        else:
+            if os.path.exists(model_path):
+                continue
+            else:
+                train(style_path)
+
+
+        print(f"Now training {genre} -> {style_name}")
+
+train_all_styles(retrain=False)
