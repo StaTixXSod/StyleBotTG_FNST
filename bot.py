@@ -48,7 +48,6 @@ def start(message: types.Message):
     bot.send_message(message.chat.id, """Hi, I'm StyleTransferBot. Let's begin!""")
     upload_content(message)
 
-@bot.message_handler(content_types=["photo"])
 def upload_content(message: types.Message):
     content = bot.send_message(message.chat.id, """So, upload the image you want to stilize..""")
     bot.register_next_step_handler(content, upload_image_on_server)
