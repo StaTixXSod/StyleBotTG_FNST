@@ -1,9 +1,9 @@
 import os
 from utils import stylize_image
 
-genre = "photo_style"
-number = "2"
-content_name = "content"
+genre = "abstraction"
+number = "1"
+content_name = "galgadot"
 
 content_path = f"examples/{content_name}.jpg"
 output_path = f"examples/{content_name}_{genre}{number}.jpg"
