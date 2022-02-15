@@ -65,12 +65,10 @@ def normalize_batch(batch):
     batch = batch.div_(255.0)
     return (batch - mean) / std
 
-def stylize_image(content_path, model_path, output_path):
+def stylize_image(content_path, model_path, output_path, device="cpu"):
     """
     This function perform style transfer on content image using pretrained model
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
     content_image = load_image(content_path, scale=None)
     width, height = resize(content_image, width=512)
     content_transform = transforms.Compose([

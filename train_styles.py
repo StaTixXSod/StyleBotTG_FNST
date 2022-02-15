@@ -14,8 +14,8 @@ from vgg import Vgg16
 import glob
 
 
-def train(style_image, dataset="coco", batch_size=2, image_size=128,
-epochs=1, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=500):
+def train(style_image, dataset="coco", batch_size=4, image_size=128,
+epochs=2, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=500):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     np.random.seed(seed)
@@ -32,9 +32,9 @@ epochs=1, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=
 
     transformer = TransformerNet().to(device)
 
-    genre = style_image.split("/")[-1].split(".")[0][:-1]
-    number = style_image.split("/")[-1].split(".")[0][-1]
-    model_path = f"models/{genre}/{style_name}{number}.model"
+    style_name = style_image.split("/")[-1].split(".")[0]
+    genre = style_image.split("/")[-2]
+    model_path = f"models/{genre}/{style_name}.model"
 
     if os.path.exists(model_path):
         transformer.load_state_dict(torch.load(model_path, map_location=device))
@@ -105,6 +105,17 @@ epochs=1, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=
     save_model_path = f"models/{genre}/{style_name}.model"
     torch.save(transformer.state_dict(), save_model_path)
 
+    # Clean up cuda memory
+    transformer = transformer.cpu()
+    vgg = vgg.cpu()
+    x = x.to("cpu")
+    y = y.to("cpu")
+    del(transformer)
+    del(vgg)
+    del(x)
+    del(y)
+    torch.cuda.empty_cache()
+
     print(f"\nDone, trained model {genre} saved at", save_model_path)
 
 
@@ -116,21 +127,42 @@ def train_all_styles(retrain=False):
     """
     style_list = glob.glob("styles/*/*")
 
-    for style_path in style_list:
+    for style_path in sorted(style_list):
         style_name = style_path.split("/")[-1].split(".")[0]
         genre = style_path.split("/")[-2]
         model_path = f"models/{genre}/{style_name}.model"
 
-        if retrain and os.path.exists(model_path):
-            train(style_path)
-        
-        else:
-            if os.path.exists(model_path):
-                continue
+        if os.path.exists(model_path):
+            if retrain:
+                print(f"[INFO] Model weights will be loaded...")
+                print(f"[INFO] Now training {genre} -> {style_name}")
+                try:
+                    train(style_path, batch_size=7)
+                except Exception as e:
+                    print(e)
+                    print("[INFO] Not enough memory. Decrease batch size to 3")
+                    try:
+                        train(style_path, batch_size=3)
+                    except Exception as e:
+                        print(e)
+                        print("[INFO] Not enough memory. Decrease batch size to 2")
+                        train(style_path, batch_size=2)
             else:
-                train(style_path)
-
-
-        print(f"Now training {genre} -> {style_name}")
+                print(f"[INFO] Model {style_name} exists, skip...")
+                continue
+        else:
+            print(f"[INFO] Model {style_name} doesn't exist.\n[INFO] Train new model...")
+            print(f"[INFO] Now training {genre} -> {style_name}")
+            try:
+                train(style_path, batch_size=7)
+            except Exception as e:
+                print(e)
+                print("[INFO] Not enough memory. Decrease batch size to 3")
+                try:
+                    train(style_path, batch_size=3)
+                except Exception as e:
+                    print(e)
+                    print("[INFO] Not enough memory. Decrease batch size to 2")
+                    train(style_path, batch_size=2)
 
 train_all_styles(retrain=False)
