@@ -60,7 +60,7 @@ def choose_genre(message: types.Message):
     genres = os.listdir("styles")
     pick_genre = types.InlineKeyboardMarkup(row_width=1)
     for genre in genres:
-        pick_genre.add(types.InlineKeyboardButton(f"{str(genre).capitalize()}", callback_data=f"{genre}"))
+        pick_genre.add(types.InlineKeyboardButton(f"{str(genre).capitalize().replace('_', ' ')}", callback_data=f"{genre}"))
 
     bot.send_message(message.chat.id, """
 What genre are you interested in?         
@@ -74,10 +74,12 @@ def choose_style(genre):
     pics = []
     pick_style = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
 
-    for pic_path in sorted(pics_path, key=lambda x: x.split(".")[0][-1], reverse=False):
-        pic = types.InputMediaPhoto(open(f"styles/{style}/{pic_path}", "rb"), caption=pic_path.split(".")[0])
+    for i, pic_path in enumerate(sorted(pics_path)):
+        pic = types.InputMediaPhoto(
+            open(f"styles/{style}/{pic_path}", "rb"),
+            caption=str(pic_path.split(".")[0]) + " -> " + str(i+1))
         pics.append(pic)
-        pick_style.add(pic_path.split(".")[0][-1])
+        pick_style.add(str(i+1))
     
     pick_style.add("Back")
     bot.send_media_group(genre.from_user.id, pics)
