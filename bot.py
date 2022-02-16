@@ -84,7 +84,7 @@ def choose_style(genre):
             caption=style_name + " -> " + str(i+1))
         pics.append(pic)
         pick_style.add(str(i+1))
-        styles[i+1] = style_name
+        styles[str(i+1)] = style_name
     
     pick_style.add("Back")
     bot.send_media_group(genre.from_user.id, pics)
@@ -109,7 +109,7 @@ def stilize(message: types.Message):
     if str(message.text).isdigit():
         number = message.text
         username = message.from_user.first_name
-        model_path = f"models/{style}/{styles[int(message.text)]}.model"
+        model_path = f"models/{style}/{styles[str(message.text)]}.model"
         content_path = f"uploaded_images/{username}/content.jpg"
         output_path = f"uploaded_images/{username}/stilized.jpg"
 
