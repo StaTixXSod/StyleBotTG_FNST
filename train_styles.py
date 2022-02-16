@@ -157,4 +157,4 @@ def train_all_styles(retrain=False, epochs=2, style_weight=1e10):
                 continue
 
 if __name__ == "__main__":
-    train_all_styles(retrain=False, epochs=2, style_weight=1e8)
+    train_all_styles(retrain=False, epochs=2, style_weight=1e10)

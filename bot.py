@@ -73,13 +73,18 @@ def choose_style(genre):
     pics_path = os.listdir(f"styles/{style}")
     pics = []
     pick_style = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    
+    global styles
+    styles = {}
 
     for i, pic_path in enumerate(sorted(pics_path)):
+        style_name = str(pic_path.split(".")[0])
         pic = types.InputMediaPhoto(
             open(f"styles/{style}/{pic_path}", "rb"),
-            caption=str(pic_path.split(".")[0]) + " -> " + str(i+1))
+            caption=style_name + " -> " + str(i+1))
         pics.append(pic)
         pick_style.add(str(i+1))
+        styles[i+1] = style_name
     
     pick_style.add("Back")
     bot.send_media_group(genre.from_user.id, pics)
@@ -104,7 +109,7 @@ def stilize(message: types.Message):
     if str(message.text).isdigit():
         number = message.text
         username = message.from_user.first_name
-        model_path = f"models/{style}/{style}{number}.model"
+        model_path = f"models/{style}/{styles[int(message.text)]}.model"
         content_path = f"uploaded_images/{username}/content.jpg"
         output_path = f"uploaded_images/{username}/stilized.jpg"
 
