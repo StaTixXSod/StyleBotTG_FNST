@@ -2,12 +2,12 @@ import os
 from utils import stylize_image
 
 genre = "abstraction"
-number = "1"
-content_name = "galgadot"
+name = "abstraction3"
+content_name = "content"
 
 content_path = f"examples/{content_name}.jpg"
-output_path = f"examples/{content_name}_{genre}{number}.jpg"
-model_path = f"models/{genre}/{genre}{number}.model"
+output_path = f"examples/{content_name}_{name}.jpg"
+model_path = f"models/{genre}/{name}.model"
 
 if os.path.exists(model_path):
     stylize_image(
@@ -19,4 +19,4 @@ if os.path.exists(model_path):
     print(f"Done! Picture has been saved in the: {output_path}")
 
 else:
-    print(f"Model {genre}{number} does not exist")
+    print(f"Model {name} does not exist")
