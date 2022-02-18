@@ -37,6 +37,7 @@ epochs=2, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=
     model_path = f"models/{genre}/{style_name}.model"
 
     if os.path.exists(model_path):
+        print("[INFO] Loading state dict for model...")
         transformer.load_state_dict(torch.load(model_path, map_location=device))
 
     optimizer = Adam(transformer.parameters(), lr)
@@ -103,7 +104,7 @@ epochs=2, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=
     style_name = style_image.split("/")[-1].split(".")[0]
     genre = style_image.split("/")[-2]
     save_model_path = f"models/{genre}/{style_name}.model"
-    torch.save(transformer.state_dict(), save_model_path)
+    torch.save(transformer.state_dict(), model_path)
 
     # Clean up cuda memory
     del(transformer)
@@ -115,7 +116,7 @@ epochs=2, seed=42, content_weight=1e5, style_weight=1e10, lr=1e-3, log_interval=
     print(f"\nDone, trained model {genre} saved at", save_model_path)
 
 
-def train_all_styles(retrain=False, epochs=2, style_weight=1e10):
+def train_all_styles(retrain=False, epochs=2, style_weight=1e10, batch_size=5, lr=1e-3):
     """
     Perform training for all styles in styles folder
     Retrain: If True, model.state_dict will be loaded and retrained if the model already exists.
@@ -133,7 +134,7 @@ def train_all_styles(retrain=False, epochs=2, style_weight=1e10):
                 print(f"\n[INFO] Model weights will be loaded...")
                 print(f"[INFO] Now training {genre} -> {style_name}")
                 try:
-                    train(style_path, batch_size=7, epochs=epochs, style_weight=style_weight)
+                    train(style_path, batch_size=batch_size, epochs=epochs, style_weight=style_weight, lr=lr)
                 except Exception as e:
                     print(e)
                     print("[INFO] Not enough memory. Next time try to decrease batch_size")
@@ -148,7 +149,7 @@ def train_all_styles(retrain=False, epochs=2, style_weight=1e10):
             print(f"\n[INFO] Model {style_name} doesn't exist.\n[INFO] Train new model...")
             print(f"[INFO] Now training {genre} -> {style_name}")
             try:
-                train(style_path, batch_size=7, epochs=epochs, style_weight=style_weight)
+                train(style_path, batch_size=batch_size, epochs=epochs, style_weight=style_weight, lr=lr)
             except Exception as e:
                 print(e)
                 print("[INFO] Not enough memory. Next time try to decrease batch_size")
@@ -157,4 +158,4 @@ def train_all_styles(retrain=False, epochs=2, style_weight=1e10):
                 continue
 
 if __name__ == "__main__":
-    train_all_styles(retrain=False, epochs=2, style_weight=1e10)
+    train_all_styles(retrain=True, epochs=1, style_weight=1e10, batch_size=4)
