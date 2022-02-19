@@ -131,7 +131,7 @@ Wait until you get the picture... (Usually it takes around 10-15 seconds)
             finish = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
             finish.add("Image", "Style", "Finish")
 
-            answer = bot.send_message(message.chat.id, """That's it! Wanna change something?""", reply_markup=finish)
+            bot.send_message(message.chat.id, """That's it! Wanna change something?""", reply_markup=finish)
 
 
 @server.route(f"/{API}", methods=["POST"])
