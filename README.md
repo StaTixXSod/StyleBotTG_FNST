@@ -48,9 +48,6 @@ _Example 2:_
 
 <img src="https://github.com/StaTixXSod/StyleBotTG_FNST/blob/master/examples/galgadot_examples.jpg?raw=true" width="280" height="280">
 
-## Advice
-
-After training a bunch of styles I can say, you should pick styles with expressed edges. Iridescent colors not really good for styling. And one more thing... my favourite styles is Psychodelic, all 3. Try it out!
 
 ### Quality
 
