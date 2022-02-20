@@ -90,7 +90,7 @@ def choose_style(genre):
     bot.send_media_group(genre.from_user.id, pics)
 
     bot.send_message(genre.from_user.id, f"""
-You picked {str(style).capitalize()}
+You picked {str(style).capitalize().replace("_", " ")}
 Now choose the picture, which style you want to apply...
     """, reply_markup=pick_style)
 
@@ -107,9 +107,9 @@ def stilize(message: types.Message):
         bot.send_message(message.chat.id, """Fine, sya! If you want to try again, type /start!""")
 
     if str(message.text).isdigit():
-        number = message.text
+        name = styles[str(message.text)]
         username = message.from_user.first_name
-        model_path = f"models/{style}/{styles[str(message.text)]}.model"
+        model_path = f"models/{style}/{name}.model"
         content_path = f"uploaded_images/{username}/content.jpg"
         output_path = f"uploaded_images/{username}/stilized.jpg"
 
@@ -122,7 +122,7 @@ Try another style...
         
         else:
             bot.send_message(message.chat.id, f"""
-You've just picked picture {number} in genre "{str(style).capitalize()}".
+You've just picked picture {name} in genre "{str(style).capitalize().replace("_", " ")}".
 Wait until you get the picture... (Usually it takes around 10-15 seconds)
             """)
             stylize_image(content_path, model_path, output_path)
